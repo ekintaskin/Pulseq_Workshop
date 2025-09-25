@@ -5,17 +5,20 @@ sys = mr.opts('MaxGrad', 28, 'GradUnit', 'mT/m', ...
 
 % basic parameters
 seq=mr.Sequence(sys);           % Create a new sequence object
-fov=256e-3; Nx=256; Ny=Nx;      % Define FOV and resolution
+fov=256e-3;
+%Nx=256; Ny=Nx;      % Define FOV and resolution
+Nx = 128; Ny=Nx;
 alpha=10;                       % flip angle
 sliceThickness=3e-3;            % slice
-TR=500e-3;                       % TR, a single value
-TE=[4.6 10.35 16.1 21.85]*1e-3;               % in-phase, out-of-phase iterations
+TR=300e-3;                       % TR, a single value
+TE=[4.6 10.35 16.1 21.85 26.25 31.05]*1e-3;               % in-phase, out-of-phase iterations
 Ndummy = 5;                    % number of dummy scans
 
 % more in-depth parameters
 rfSpoilingInc=117;              % RF spoiling increment
 rfDuration=3e-3;
 roDuration=3.2e-3;              % not all values are possible, watch out for the checkTiming output
+%roDuration = 3.35e-3;   % was 3.2e-3
 
 % Create alpha-degree slice selection pulse and corresponding gradients 
 [rf, gz, gzReph] = mr.makeSincPulse(alpha*pi/180,'Duration',rfDuration,...
@@ -103,7 +106,7 @@ end
 %% prepare sequence export
 seq.setDefinition('FOV', [fov fov sliceThickness]);
 seq.setDefinition('Name', 'mgre');
-seq.write('C:\Users\salom\OneDrive - epfl.ch\Bureau\phd\pulseq_workshop\github\pulseq-ekin\Pulseq_Workshop\P4_Multiecho_sequence\mgre_dixon.seq')       % Write to pulseq file
+seq.write('/Users/ekintaskin/Downloads/Pulseq_Workshop-main/P4_Multiecho_sequence/mgre_2.seq')       % Write to pulseq file
 %seq.install('siemens');
 
 %% plot sequence and k-space diagrams

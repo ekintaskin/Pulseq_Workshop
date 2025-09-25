@@ -8,8 +8,8 @@ seq=mr.Sequence(sys);           % Create a new sequence object
 fov=256e-3; Nx=256; Ny=Nx;      % Define FOV and resolution
 alpha=10;                       % flip angle
 sliceThickness=3e-3;            % slice
-TR=21e-3;                       % TR, a single value
-TE=[4 9 15]*1e-3;               % give a vector here to have multiple TEs
+TR=500e-3;                       % TR, a single value
+TE=[4.6 10.35 16.1 21.85]*1e-3;               % in-phase, out-of-phase iterations
 
 % more in-depth parameters
 rfSpoilingInc=117;              % RF spoiling increment
@@ -88,7 +88,7 @@ end
 %% prepare sequence export
 seq.setDefinition('FOV', [fov fov sliceThickness]);
 seq.setDefinition('Name', 'mgre');
-seq.write('mgre.seq')       % Write to pulseq file
+seq.write('C:\Users\salom\OneDrive - epfl.ch\Bureau\phd\pulseq_workshop\github\pulseq-ekin\Pulseq_Workshop\P4_Multiecho_sequence\mgre_dixon.seq')       % Write to pulseq file
 %seq.install('siemens');
 
 %% plot sequence and k-space diagrams

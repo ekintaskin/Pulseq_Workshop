@@ -10,6 +10,7 @@ alpha=10;                       % flip angle
 sliceThickness=3e-3;            % slice
 TR=500e-3;                       % TR, a single value
 TE=[4.6 10.35 16.1 21.85]*1e-3;               % in-phase, out-of-phase iterations
+Ndummy = 5;                    % number of dummy scans
 
 % more in-depth parameters
 rfSpoilingInc=117;              % RF spoiling increment
@@ -50,28 +51,42 @@ rf_phase=0;
 rf_inc=0;
 
 % define sequence blocks
-for i=1:Ny % loop over phase encodes
+for i=(1-Ndummy):Ny % loop over phase encodes
     rf.phaseOffset=rf_phase/180*pi;
     adc.phaseOffset=rf_phase/180*pi;
     rf_inc=mod(rf_inc+rfSpoilingInc, 360.0);
     rf_phase=mod(rf_phase+rf_inc, 360.0);
     %
     seq.addBlock(rf,gz);
-    gyPre = mr.makeTrapezoid('y','Area',phaseAreas(i),'Duration',mr.calcDuration(gxPre),'system',sys);
+    if (i>0)
+        gyPre = mr.makeTrapezoid('y','Area',phaseAreas(i),'Duration',mr.calcDuration(gxPre),'system',sys);
+    end
     for c=1:length(TE) % loop over TEs
         if (c==1)
-            seq.addBlock(mr.align('left', mr.makeDelay(delayTE(c)),gyPre,gzReph,'right',gxPre)); 
+            if (i>0)
+                seq.addBlock(mr.align('left', mr.makeDelay(delayTE(c)),gyPre,gzReph,'right',gxPre)); 
+            else
+                seq.addBlock(mr.align('left', mr.makeDelay(delayTE(c)),gzReph,'right',gxPre)); 
+            end
         else
             seq.addBlock(mr.align('left', mr.makeDelay(delayTE(c)),'right',gxFlyBack));
         end
-        seq.addBlock(gx,adc);
+        if (i>0)
+            seq.addBlock(gx,adc);
+        else
+            seq.addBlock(gx);
+        end
         % to check/debug TE calculation with seq.testReport() comment out
         % the above line and uncommend the line below this comment block; 
         % change 'c==3' statement to select the echo to test
         % if c==3, seq.addBlock(gx,adc); else, seq.addBlock(gx); end
     end
-    gyPre.amplitude=-gyPre.amplitude; % better to use mr.scaleGrad(gyPre,-1);
-    seq.addBlock(mr.makeDelay(delayTR),gxSpoil,gyPre,gzSpoil)
+    if (i>0)
+        gyPre.amplitude=-gyPre.amplitude; % better to use mr.scaleGrad(gyPre,-1);
+        seq.addBlock(mr.makeDelay(delayTR),gxSpoil,gyPre,gzSpoil)
+    else
+        seq.addBlock(mr.makeDelay(delayTR),gxSpoil,gzSpoil)
+    end
 end
 
 %% check whether the timing of the sequence is correct

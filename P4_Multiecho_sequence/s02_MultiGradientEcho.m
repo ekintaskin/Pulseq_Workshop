@@ -11,12 +11,16 @@ Nx = 128; Ny=Nx;
 alpha=10;                       % flip angle
 sliceThickness=3e-3;            % slice
 TR=300e-3;                       % TR, a single value
-TE=[4.6 10.35 16.1 21.85 26.25 31.05]*1e-3;               % in-phase, out-of-phase iterations
+%TE=[4.6 10.35 16.1 21.85 26.25 31.05]*1e-3;               % in-phase, out-of-phase iterations
+TE=[3.45, 6.9 ]*1e-3;   
 Ndummy = 5;                    % number of dummy scans
 
 % more in-depth parameters
 rfSpoilingInc=117;              % RF spoiling increment
 rfDuration=3e-3;
+
+
+
 roDuration=3.2e-3;              % not all values are possible, watch out for the checkTiming output
 %roDuration = 3.35e-3;   % was 3.2e-3
 
